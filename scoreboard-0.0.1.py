@@ -13,9 +13,12 @@ black = (0,0,0)
 white = (255,255,255)
 red = (255,0,0)
 blue = (0,0,255)
+# dark shade of the button
+color_dark = (100,100,100)
 
 clock = pygame.time.Clock()
 crashed = False
+playing = False
 
 timer_sec = 120
 timer_d_min = 10
@@ -53,6 +56,10 @@ e2 = font3.render("EQUIPE 2", True, white)
 e2_rect = e1.get_rect()
 e2_rect.centerx, e2_rect.centery = 590, 520
 
+start_btn_text = font3.render("Iniciar", True, white)
+pause_btn_text = font3.render("Parar", True, white)
+
+
 # USEREVENTS are just integers
 # you can only have like 31 of them or something arbitrarily low
 timer = pygame.USEREVENT + 1                                                
@@ -73,14 +80,35 @@ while not crashed:
         if event.type == pygame.QUIT:
             crashed = True
         if event.type == timer:    # checks for timer event
+            print(playing)
             if timer_sec > 0:
-                timer_sec -= 1
-                formatted = str(datetime.timedelta(seconds=timer_sec))[2:7]
-                mm = font.render(formatted, True, red)               
+                if playing:
+                    timer_sec -= 1
+                    formatted = str(datetime.timedelta(seconds=timer_sec))[2:7]
+                    mm = font.render(formatted, True, red)               
             else:
                 pygame.time.set_timer(timer, 0)    # turns off timer event
+        #checks if a mouse is clicked
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            #if the mouse is clicked on the
+            # button the game is terminated
+            if 670 <= mouse[0] <= 670+140 and 120 <= mouse[1] <= 120+40:
+                if playing == False:
+                    playing = True
+                else:
+                    playing = False
 
     gameDisplay.fill(black)
+    # stores the (x,y) coordinates into
+    # the variable as a tuple
+    mouse = pygame.mouse.get_pos()
+
+    pygame.draw.rect(gameDisplay,color_dark,[670,120,100,40])
+    # superimposing the text onto our button
+    if playing:
+        gameDisplay.blit(pause_btn_text , (670+15,126))
+    else:
+        gameDisplay.blit(start_btn_text , (670+9,126))
 
     gameDisplay.blit(mm, mm_rect)
     gameDisplay.blit(p, p_rect)
